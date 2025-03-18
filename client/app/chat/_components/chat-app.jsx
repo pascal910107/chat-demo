@@ -53,8 +53,8 @@ export default function ChatApp() {
       })
 
       socket.on('usersUpdated', (list) => {
-        setUserList(list);
-      });
+        setUserList(list)
+      })
 
       // 清理 socket 連線
       return () => {

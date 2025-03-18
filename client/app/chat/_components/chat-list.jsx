@@ -1,10 +1,10 @@
-import { MessageCirclePlus, Search, Users } from "lucide-react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
+import { MessageCirclePlus, Search, Users } from 'lucide-react'
+import { useState } from 'react'
 
 export default function ChatList({
   rooms,
@@ -12,8 +12,10 @@ export default function ChatList({
   onSelectRoom,
   onOpenCreateModal,
 }) {
-  const [searchQuery, setSearchQuery] = useState("")
-  const filteredRooms = rooms.filter((room) => room.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const [searchQuery, setSearchQuery] = useState('')
+  const filteredRooms = rooms.filter((room) =>
+    room.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
 
   return (
     <div className="w-80 border-r border-border bg-card flex flex-col h-full md:w-72 sm:w-full sm:max-w-[260px]">
@@ -21,7 +23,12 @@ export default function ChatList({
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-primary">我的聊天室</h2>
-          <Button onClick={onOpenCreateModal} size="icon" variant="ghost" className="h-8 w-8 text-primary">
+          <Button
+            onClick={onOpenCreateModal}
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 text-primary"
+          >
             <MessageCirclePlus size={20} />
             <span className="sr-only">新聊天室</span>
           </Button>
@@ -43,7 +50,9 @@ export default function ChatList({
       {/* 聊天室清單 */}
       <ScrollArea className="flex-1">
         {filteredRooms.length === 0 ? (
-          <div className="p-4 text-center text-muted-foreground">沒有找到聊天室</div>
+          <div className="p-4 text-center text-muted-foreground">
+            沒有找到聊天室
+          </div>
         ) : (
           filteredRooms.map((room) => {
             const isSelected = room.id === currentRoomId
@@ -51,15 +60,21 @@ export default function ChatList({
               <div
                 key={room.id}
                 className={cn(
-                  "p-3 border-b border-border cursor-pointer transition-colors",
-                  isSelected ? "bg-primary/10 hover:bg-primary/15" : "hover:bg-muted",
+                  'p-3 border-b border-border cursor-pointer transition-colors',
+                  isSelected
+                    ? 'bg-primary/10 hover:bg-primary/15'
+                    : 'hover:bg-muted',
                 )}
                 onClick={() => onSelectRoom(room.id)}
               >
                 <div className="flex justify-between items-center mb-1">
                   <div className="font-medium flex items-center gap-1.5">
-                    {room.isGroup && <Users size={14} className="text-muted-foreground" />}
-                    <span className={cn(isSelected && "text-primary")}>{room.name}</span>
+                    {room.isGroup && (
+                      <Users size={14} className="text-muted-foreground" />
+                    )}
+                    <span className={cn(isSelected && 'text-primary')}>
+                      {room.name}
+                    </span>
                   </div>
                   {room.unreadCount > 0 && (
                     <span className="bg-primary text-primary-foreground text-xs px-2 py-0.5 rounded-full">
@@ -67,7 +82,9 @@ export default function ChatList({
                     </span>
                   )}
                 </div>
-                <div className="text-sm text-muted-foreground truncate">{room.lastMessage || "(尚無訊息)"}</div>
+                <div className="text-sm text-muted-foreground truncate">
+                  {room.lastMessage || '(尚無訊息)'}
+                </div>
                 {/* 顯示通話狀態 */}
                 {room.inCall && (
                   <div className="text-xs text-primary flex items-center gap-1 mt-1">

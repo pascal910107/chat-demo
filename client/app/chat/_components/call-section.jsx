@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from "react"
-import { Phone, PhoneOff, Video, Mic, MicOff } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { cn } from "@/lib/utils"
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { cn } from '@/lib/utils'
+import { Phone, PhoneOff, Video, Mic, MicOff } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
 
 export default function CallSection({ socket, username, currentRoomId }) {
   const [inCall, setInCall] = useState(false) // 是否已加入通話
@@ -14,7 +14,7 @@ export default function CallSection({ socket, username, currentRoomId }) {
   const [isVideoOff, setIsVideoOff] = useState(false)
   const localStreamRef = useRef(null) // 自己的音/視訊
   const peerConnectionsRef = useRef({}) // { [user]: RTCPeerConnection }
-  const pendingCandidatesRef = useRef({}); // { [remoteUser]: candidate[] }
+  const pendingCandidatesRef = useRef({}) // { [remoteUser]: candidate[] }
 
   // 加入通話
   const joinCall = async () => {
@@ -84,7 +84,7 @@ export default function CallSection({ socket, username, currentRoomId }) {
       // 逐一跟這些成員做 p2p 連線，根據使用者名稱大小來決定誰發起連線
       // createOffer -> sendOffer
       members.forEach((m) => {
-        const isInitiator = username < m  // 若自己的 username 字串較小，則發起連線
+        const isInitiator = username < m // 若自己的 username 字串較小，則發起連線
         createPeerConnection(m, isInitiator)
       })
       setCallUsers(members)
@@ -128,9 +128,9 @@ export default function CallSection({ socket, username, currentRoomId }) {
         await pc.setRemoteDescription(offer)
         if (pendingCandidatesRef.current[from]) {
           for (let candidate of pendingCandidatesRef.current[from]) {
-            await pc.addIceCandidate(candidate);
+            await pc.addIceCandidate(candidate)
           }
-          delete pendingCandidatesRef.current[from];
+          delete pendingCandidatesRef.current[from]
         }
         const answer = await pc.createAnswer()
         await pc.setLocalDescription(answer)
@@ -155,15 +155,15 @@ export default function CallSection({ socket, username, currentRoomId }) {
     // 收到對方ICE
     const handleReceiveICECandidate = async ({ from, candidate }) => {
       const pc = peerConnectionsRef.current[from]
-      if (!pc) return;
+      if (!pc) return
 
       if (!pc.remoteDescription || !pc.remoteDescription.type) {
         if (!pendingCandidatesRef.current[from]) {
-          pendingCandidatesRef.current[from] = [];
+          pendingCandidatesRef.current[from] = []
         }
-        pendingCandidatesRef.current[from].push(candidate);
+        pendingCandidatesRef.current[from].push(candidate)
       } else {
-        await pc.addIceCandidate(candidate);
+        await pc.addIceCandidate(candidate)
       }
     }
 
@@ -235,9 +235,9 @@ export default function CallSection({ socket, username, currentRoomId }) {
       // 通常 setRemoteDescription 後再處理所有累積的 Candidate
       if (pendingCandidatesRef.current[remoteUser]) {
         for (let candidate of pendingCandidatesRef.current[remoteUser]) {
-          await pc.addIceCandidate(candidate);
+          await pc.addIceCandidate(candidate)
         }
-        delete pendingCandidatesRef.current[remoteUser];
+        delete pendingCandidatesRef.current[remoteUser]
       }
       const answer = await pc.createAnswer()
       await pc.setLocalDescription(answer)
@@ -272,7 +272,10 @@ export default function CallSection({ socket, username, currentRoomId }) {
               <Button
                 variant="outline"
                 size="icon"
-                className={cn(isMuted && "bg-destructive/10 text-destructive border-destructive/50")}
+                className={cn(
+                  isMuted &&
+                    'bg-destructive/10 text-destructive border-destructive/50',
+                )}
                 onClick={toggleMute}
               >
                 {isMuted ? <MicOff size={16} /> : <Mic size={16} />}
@@ -280,12 +283,24 @@ export default function CallSection({ socket, username, currentRoomId }) {
               <Button
                 variant="outline"
                 size="icon"
-                className={cn(isVideoOff && "bg-destructive/10 text-destructive border-destructive/50")}
+                className={cn(
+                  isVideoOff &&
+                    'bg-destructive/10 text-destructive border-destructive/50',
+                )}
                 onClick={toggleVideo}
               >
-                {isVideoOff ? <Video size={16} className="line-through" /> : <Video size={16} />}
+                {isVideoOff ? (
+                  <Video size={16} className="line-through" />
+                ) : (
+                  <Video size={16} />
+                )}
               </Button>
-              <Button variant="destructive" size="sm" className="gap-1" onClick={leaveCall}>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="gap-1"
+                onClick={leaveCall}
+              >
                 <PhoneOff size={14} />
                 離開通話
               </Button>
@@ -296,14 +311,24 @@ export default function CallSection({ socket, username, currentRoomId }) {
           <ScrollArea className="h-[180px]">
             <div className="grid grid-cols-3 gap-2">
               {Object.entries(videoStreams).map(([user, stream]) => (
-                <VideoPlayer key={user} user={user} stream={stream} self={user === username} />
+                <VideoPlayer
+                  key={user}
+                  user={user}
+                  stream={stream}
+                  self={user === username}
+                />
               ))}
             </div>
           </ScrollArea>
         </div>
       ) : (
         <div className="flex justify-end">
-          <Button variant="default" className="gap-1.5" onClick={joinCall} disabled={!currentRoomId}>
+          <Button
+            variant="default"
+            className="gap-1.5"
+            onClick={joinCall}
+            disabled={!currentRoomId}
+          >
             <Phone size={16} />
             加入通話
           </Button>
@@ -334,9 +359,13 @@ function VideoPlayer({ user, stream, self }) {
       <div className="absolute bottom-1 left-1 right-1 flex justify-between items-center">
         <span className="text-white text-xs bg-black/60 px-1.5 py-0.5 rounded-sm">
           {user}
-          {self && " (你)"}
+          {self && ' (你)'}
         </span>
-        {self && <span className="text-white text-xs bg-primary/80 px-1.5 py-0.5 rounded-sm">自己</span>}
+        {self && (
+          <span className="text-white text-xs bg-primary/80 px-1.5 py-0.5 rounded-sm">
+            自己
+          </span>
+        )}
       </div>
     </div>
   )

@@ -38,9 +38,7 @@ export default function LoginPage() {
               onChange={(e) => setUsername(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleJoinApp()}
             />
-            <Button onClick={handleJoinApp}>
-              加入
-            </Button>
+            <Button onClick={handleJoinApp}>加入</Button>
           </div>
         </CardContent>
       </Card>

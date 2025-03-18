@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Users, User } from "lucide-react"
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -9,13 +9,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Checkbox } from "@/components/ui/checkbox"
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Users, User } from 'lucide-react'
+import { useState } from 'react'
 
 export default function RoomCreateModal({
   onClose,
@@ -28,8 +28,8 @@ export default function RoomCreateModal({
   const [selectedUsers, setSelectedUsers] = useState([])
 
   const handleSetIsGroup = (val) => {
-    setIsGroup(val === "group")
-    if (val !== "group" && selectedUsers.length > 1) {
+    setIsGroup(val === 'group')
+    if (val !== 'group' && selectedUsers.length > 1) {
       setSelectedUsers([])
     }
   }
@@ -77,11 +77,17 @@ export default function RoomCreateModal({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>建立新聊天室</DialogTitle>
-          <DialogDescription>選擇聊天類型並添加參與者來開始對話</DialogDescription>
+          <DialogDescription>
+            選擇聊天類型並添加參與者來開始對話
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          <RadioGroup defaultValue="private" onValueChange={handleSetIsGroup} className="flex gap-4">
+          <RadioGroup
+            defaultValue="private"
+            onValueChange={handleSetIsGroup}
+            className="flex gap-4"
+          >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="private" id="private" />
               <Label htmlFor="private" className="flex items-center gap-1.5">

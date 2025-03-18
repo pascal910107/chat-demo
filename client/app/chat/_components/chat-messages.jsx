@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef } from "react"
-import { Image, Send } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
+import { Image, Send } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 
 export default function ChatMessages({
   currentRoomId,
@@ -34,7 +34,7 @@ export default function ChatMessages({
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSend()
     }
@@ -42,9 +42,9 @@ export default function ChatMessages({
 
   const handleClickMessagesArea = () => {
     if (currentRoomId) {
-      socketRef.current.emit('readRoom', currentRoomId);
+      socketRef.current.emit('readRoom', currentRoomId)
     }
-  };
+  }
 
   if (!currentRoomId) {
     return (
@@ -53,7 +53,9 @@ export default function ChatMessages({
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <MessageIcon className="h-8 w-8 text-primary" />
           </div>
-          <span className="text-muted-foreground text-center">請選擇或建立一個聊天室開始對話</span>
+          <span className="text-muted-foreground text-center">
+            請選擇或建立一個聊天室開始對話
+          </span>
         </div>
       </div>
     )
@@ -64,19 +66,26 @@ export default function ChatMessages({
     return (
       <div className="flex-1 flex flex-col bg-card">
         <div className="flex-1 flex items-center justify-center">
-          <span className="text-muted-foreground">你無權限查看此聊天室或聊天室不存在</span>
+          <span className="text-muted-foreground">
+            你無權限查看此聊天室或聊天室不存在
+          </span>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-card" onClick={handleClickMessagesArea}>
+    <div
+      className="flex-1 flex flex-col bg-card"
+      onClick={handleClickMessagesArea}
+    >
       {/* 聊天室標題 */}
       <div className="p-4 border-b border-border flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">{room.name}</h2>
-          <span className="text-xs text-muted-foreground">{room.isGroup ? "群組聊天室" : "1對1 聊天"}</span>
+          <span className="text-xs text-muted-foreground">
+            {room.isGroup ? '群組聊天室' : '1對1 聊天'}
+          </span>
         </div>
       </div>
 
@@ -86,9 +95,9 @@ export default function ChatMessages({
           {messages.map((msg, idx) => {
             // Get initials for avatar
             const initials = msg.sender
-              .split(" ")
+              .split(' ')
               .map((n) => n[0])
-              .join("")
+              .join('')
               .toUpperCase()
               .substring(0, 2)
 
@@ -100,13 +109,19 @@ export default function ChatMessages({
                 <div className="flex-1 space-y-1">
                   <div className="flex items-baseline gap-2">
                     <span className="font-medium">{msg.sender}</span>
-                    <span className="text-xs text-muted-foreground">{msg.time}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {msg.time}
+                    </span>
                   </div>
-                  {msg.type === "text" && <div className="rounded-md bg-muted p-3 text-sm">{msg.text}</div>}
-                  {msg.type === "image" && (
+                  {msg.type === 'text' && (
+                    <div className="rounded-md bg-muted p-3 text-sm">
+                      {msg.text}
+                    </div>
+                  )}
+                  {msg.type === 'image' && (
                     <div className="rounded-md overflow-hidden border border-border">
                       <img
-                        src={msg.text || "/placeholder.svg"}
+                        src={msg.text || '/placeholder.svg'}
                         alt="uploaded"
                         className="max-w-xs max-h-64 object-contain"
                       />
@@ -124,7 +139,12 @@ export default function ChatMessages({
 
       {/* 送出訊息區 */}
       <div className="p-4 flex items-center gap-2">
-        <Button variant="outline" size="icon" className="shrink-0" onClick={() => fileInputRef.current?.click()}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="shrink-0"
+          onClick={() => fileInputRef.current?.click()}
+        >
           <Image size={18} />
           <span className="sr-only">上傳圖片</span>
           <input
@@ -147,7 +167,11 @@ export default function ChatMessages({
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <Button onClick={handleSend} className="shrink-0" disabled={!text.trim()}>
+        <Button
+          onClick={handleSend}
+          className="shrink-0"
+          disabled={!text.trim()}
+        >
           <Send size={18} className="mr-2" />
           送出
         </Button>
