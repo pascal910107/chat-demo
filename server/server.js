@@ -191,7 +191,6 @@ io.on('connection', (socket) => {
     }
 
     const newRoomId = generateRoomId();
-    // 如果是1對1就顯示對方的名稱
     let finalRoomName = roomName || '未命名群組';
     if (!isGroup && participants.length === 2) {
       finalRoomName = `${participants[0]} & ${participants[1]}`;
@@ -311,8 +310,9 @@ io.on('connection', (socket) => {
   });
 
   /* =============== 多人 WebRTC 通話 (Mesh P2P) ================= */
-  // 進入通話，廣播給同聊天室參與者
-  socket.on('joinCall', (roomId) => {
+  // 進入通話，廣播給同聊天室參與者，data: { roomId, type: 'video' | 'audio' }
+  socket.on('joinCall', (data) => {
+    const { roomId, type } = data;
     const username = getUsernameFromSocketId(socket.id);
     if (!username) return;
 
@@ -325,26 +325,49 @@ io.on('connection', (socket) => {
     }
     callParticipants[roomId].add(username);
 
-    // 告訴該使用者目前已在通話的成員有哪些(不包含自己)
-    const otherUsers = [...callParticipants[roomId]].filter(u => u !== username);
-    // 回傳給自己
-    socket.emit('callMembers', otherUsers);
+    if (!roomData.isGroup && roomData.participants.length === 2) {
+      if (callParticipants[roomId].size === 2) {
+        // 已在通話中，不再通知
+        return;        
+      }
+      // 告訴該使用者對方是誰，並詢問是否要通話
+      const otherUser = roomData.participants.filter(u => u !== username);
+      socket.emit('callMembers', { otherUser, type });
+    } else {
+      // 告訴該使用者目前已在通話的成員有哪些(不包含自己)
+      const otherUser = [...callParticipants[roomId]].filter(u => u !== username);
+      // 回傳給自己
+      socket.emit('callMembers', { otherUser, type });
 
-    // 通知其他人有新成員進入通話
-    roomData.participants.forEach((user) => {
-      if (user === username) return; // 不通知自己
-      // 在此聊天室且已經在通話中的所有 socket
-      if (callParticipants[roomId].has(user)) {
-        for (let sId in socketUserMap) {
-          if (socketUserMap[sId].username === user) {
-            io.to(sId).emit('newPeer', { username });
+      // 通知其他人有新成員進入通話
+      roomData.participants.forEach((user) => {
+        if (user === username) return; // 不通知自己
+        // 如果是群組聊天室，則通知所有在此聊天室且已經在通話中的 socket
+        if (callParticipants[roomId].has(user)) {
+          for (let sId in socketUserMap) {
+            if (socketUserMap[sId].username === user) {
+              io.to(sId).emit('newPeer', { username, type });
+            }
           }
         }
-      }
-    });
-
+      });
+    }
     // 更新聊天室列表 (inCall 狀態)
     roomData.participants.forEach((user) => updateUserRooms(user));
+  });
+  
+  // 拒絕通話
+  socket.on('rejectCall', (targetUser) => {
+    const username = getUsernameFromSocketId(socket.id);
+    if (!username) return;
+    console.log(`${username} 拒絕與 ${targetUser} 通話`);
+
+    // 通知對方已被拒絕，並告知拒絕者是誰
+    for (let sId in socketUserMap) {
+      if (socketUserMap[sId].username === targetUser) {
+        io.to(sId).emit('callRejected', { from: username });
+      }
+    }
   });
 
   // 離開通話
@@ -380,12 +403,12 @@ io.on('connection', (socket) => {
   socket.on('sendOffer', (data) => {
     const username = getUsernameFromSocketId(socket.id);
     if (!username) return;
-    const { roomId, targetUser, offer } = data;
+    const { roomId, targetUser, offer, type } = data;
 
     // 找到對方 socketId
     for (let sId in socketUserMap) {
       if (socketUserMap[sId].username === targetUser) {
-        io.to(sId).emit('receiveOffer', { from: username, offer });
+        io.to(sId).emit('receiveOffer', { from: username, offer, roomId, type });
       }
     }
   });

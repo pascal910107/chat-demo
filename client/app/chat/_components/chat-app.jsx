@@ -130,13 +130,15 @@ export default function ChatApp() {
           messages={messages}
           onSendMessage={handleSendMessage}
           onUploadImage={handleUploadImage}
-          socketRef={socketRef}
+          socket={socketRef.current}
         />
         {/* 通話區域 */}
         <CallSection
           socket={socketRef.current}
           username={username}
           currentRoomId={currentRoomId}
+          isGroup={rooms.find((r) => r.id === currentRoomId)?.isGroup}
+          handleSelectRoom={handleSelectRoom}
         />
       </div>
 

@@ -14,7 +14,7 @@ export default function ChatMessages({
   messages,
   onSendMessage,
   onUploadImage,
-  socketRef,
+  socket,
 }) {
   const [text, setText] = useState('')
   const messagesEndRef = useRef(null)
@@ -42,7 +42,7 @@ export default function ChatMessages({
 
   const handleClickMessagesArea = () => {
     if (currentRoomId) {
-      socketRef.current.emit('readRoom', currentRoomId)
+      socket.emit('readRoom', currentRoomId)
     }
   }
 
