@@ -27,8 +27,6 @@ export default function CallSection({
   // 加入通話
   const joinCall = async (type, roomIdParam) => {
     const roomId = roomIdParam || currentRoomId
-    console.log('加入通話:', roomId)
-
     if (!socket || !roomId) return
     // 先取得自己音視頻
     setCallType(type)
@@ -170,8 +168,6 @@ export default function CallSection({
   useEffect(() => {
     if (!socket) return
     const handleCallMembers = ({ otherUser, type }) => {
-      console.log('callMembers:', otherUser, type)
-
       // 1v1直接建立連線
       if (!isGroup) {
         if (otherUser.length === 0) return
